@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JS Barcode</title>
+    <title>JS Barcode PDRTechnology | Deratek</title>
 
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -19,19 +19,21 @@
 
         <!-- Title -->
         <h1 class="text-3xl font-bold mb-6">
-            Barcode Generate
+            Barcode Generate PDRTechnology | Deratek
         </h1>
 
         <!-- Card -->
         <div class="card card-border bg-base-100 w-96 shadow-lg">
             <div class="card-body">
-                <h2 class="card-title">Type text</h2>
+                <h2 class="card-title">Text</h2>
                 <input type="text" v-model="inputText" placeholder="Type here" class="input" />
                 <h2 class="card-title">Format</h2>
                 <input type="text" v-model="format" placeholder="Format" disabled class="input" />
 
                 <div class="card-actions justify-end">
                     <button @click="generate" class="btn btn-primary">Generate</button>
+                    <button @click="download" class="btn btn-primary">Download</button>
+                    
                 </div>
 
                 <hr>
@@ -62,13 +64,47 @@
                         return;
                     }
                     JsBarcode("#barcode1", this.inputText,{
-                        lineColor: "rgb(255, 0, 0)",
+                        lineColor: "rgb(0, 0, 0)",
                         format : "CODE128",
                     });
+                },
+                download(){
+                      const svg = document.getElementById("barcode1");
+                const serializer = new XMLSerializer();
+                const svgStr = serializer.serializeToString(svg);
+
+                // Buat canvas
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                const img = new Image();
+                const svgBlob = new Blob([svgStr], { type: "image/svg+xml;charset=utf-8" });
+                const url = URL.createObjectURL(svgBlob);
+
+                img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    URL.revokeObjectURL(url);
+
+                    // Convert ke PNG
+                    const pngUrl = canvas.toDataURL("image/png");
+
+                    const link = document.createElement("a");
+                    link.href = pngUrl;
+                    link.download = "barcode.png";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                };
+
+                img.src = url;
                 }
             },
             mounted() {
-               
+               this.inputText = 'www.pdrtechnology.net';
+               this.generate()
             }
         }).mount('#app');
     </script>
